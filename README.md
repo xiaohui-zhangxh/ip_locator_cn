@@ -1,8 +1,6 @@
-# IpLocatorCn
+# IP Locator CN
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ip_locator_cn`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+基于纯真 IP 库解析中国的 IP，参考了“[纯真数据库自动更新原理](https://github.com/shuax/QQWryUpdate/blob/master/update.php)” 和 “[PHP 版本的 IP 搜索源码](https://github.com/itbdw/ip-database/blob/master/src/IpLocation.php)”
 
 ## Installation
 
@@ -22,7 +20,42 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+从 Gem 包集成的 qqwry.dat 数据库解析 IP：
+
+```ruby
+2.4.5 :001 > require 'ip_locator_cn'
+ => true
+2.4.5 :002 > IpLocatorCn.resolve('60.195.153.98')
+ => {:province=>"北京", :city=>"顺义区", :country=>"中国", :ip=>"60.195.153.98", :county=>"", :isp=>"", :area=>"中国北京顺义区后沙峪金龙网吧", :origin_country=>"北京市顺义区", :origin_area=>"后沙峪金龙网吧"}
+```
+
+在线下载并解码 qqwry.dat ，然后解析 IP：
+
+```ruby
+2.4.5 :001 > require 'ip_locator_cn'
+ => true
+2.4.5 :002 > IpLocatorCn.resolve('60.195.153.98', live_dat: true)
+ => {:province=>"北京", :city=>"顺义区", :country=>"中国", :ip=>"60.195.153.98", :county=>"", :isp=>"", :area=>"中国北京顺义区后沙峪金龙网吧", :origin_country=>"北京市顺义区", :origin_area=>"后沙峪金龙网吧"}
+```
+
+开启调试信息：
+
+```ruby
+2.4.5 :001 > require 'ip_locator_cn'
+ => true
+2.4.5 :002 > IpLocatorCn.resolve('60.195.153.98', live_dat: true, debug: true)
+[2019-03-01 17:37:46 +0800] => downloading http://update.cz88.net/ip/copywrite.rar
+[2019-03-01 17:37:46 +0800] => downloading http://update.cz88.net/ip/qqwry.rar
+[2019-03-01 17:37:49 +0800] => qqwry decoding key is 225
+[2019-03-01 17:37:49 +0800] => total ip ranges: 472217
+[2019-03-01 17:37:53 +0800] => pos is 6658343
+[2019-03-01 17:37:53 +0800] => begin_ip is 60.195.153.0
+[2019-03-01 17:37:53 +0800] => endip is 60.195.153.255
+[2019-03-01 17:37:53 +0800] => offset is 696416
+[2019-03-01 17:37:53 +0800] => country is 北京市顺义区
+[2019-03-01 17:37:53 +0800] => area is 后沙峪金龙网吧
+ => {:province=>"北京", :city=>"顺义区", :country=>"中国", :ip=>"60.195.153.98", :county=>"", :isp=>"", :area=>"中国北京顺义区后沙峪金龙网吧", :origin_country=>"北京市顺义区", :origin_area=>"后沙峪金龙网吧"}
+```
 
 ## Development
 
@@ -33,6 +66,12 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/xiaohui-zhangxh/ip_locator_cn.
+
+### Test
+
+```bash
+bundle exec rspec
+```
 
 ## License
 

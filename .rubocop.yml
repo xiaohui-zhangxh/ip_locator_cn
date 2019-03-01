@@ -1,0 +1,4 @@
+Style/ExpandPathArguments:
+  Enabled: false
+Layout/SpaceAroundEqualsInParameterDefault:
+  Enabled: false

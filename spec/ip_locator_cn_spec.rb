@@ -23,8 +23,9 @@ RSpec.describe IpLocatorCn do
       county: '',
       area: '中国四川成都市电信',
       isp: '电信',
-      ip: '171.221.4.111'
+      ip: '171.221.4.111',
+      origin_country: '四川省成都市',
+      origin_area: '电信'
     )
   end
-
 end

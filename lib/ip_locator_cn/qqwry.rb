@@ -4,7 +4,7 @@ require 'ip_locator_cn/qqwry/isp'
 
 module IpLocatorCn
   class QQWry
-    IP_ENTRY_BYTES = 7.freeze
+    IP_ENTRY_BYTES = 7
 
     attr_reader :first_ip_pos, :last_ip_pos, :total_ips, :debug
 
@@ -20,13 +20,15 @@ module IpLocatorCn
     end
 
     # return: <Hash> result
-    # result['ip']        输入的ip
-    # result['country']   国家 如 中国
-    # result['province']  省份信息 如 河北省
-    # result['city']      市区 如 邢台市
-    # result['county']    郡县 如 威县
-    # result['isp']       运营商 如 联通
-    # result['area']      最完整的信息 如 中国河北省邢台市威县新科网吧(北外街)
+    # result['ip']              输入的ip
+    # result['country']         国家 如 中国
+    # result['province']        省份信息 如 河北省
+    # result['city']            市区 如 邢台市
+    # result['county']          郡县 如 威县
+    # result['isp']             运营商 如 联通
+    # result['area']            最完整的信息 如 中国河北省邢台市威县新科网吧(北外街)
+    # result['origin_country']  解析之前的原始信息
+    # result['origin_area']     解析之前的原始信息
     def resolve(ip)
       location = location_from_ip(ip)
       extract_location(location[:country]).tap do |result|
@@ -43,6 +45,8 @@ module IpLocatorCn
           result[:county],
           location[:area]
         ].join
+        result[:origin_country] = location[:country]
+        result[:origin_area] = location[:area]
       end
     end
 
@@ -52,40 +56,40 @@ module IpLocatorCn
       log "pos is #{pos}"
       # 用户IP所在范围的开始地址
       seek(pos)
-      begin_ip = long2ip(read_ip())
+      begin_ip = long2ip(read_ip)
       log "begin_ip is #{begin_ip}"
       # 用户IP所在范围的结束地址
-      offset = getlong3()
+      offset = getlong3
       seek(offset)
-      endip = long2ip(read_ip())
+      endip = long2ip(read_ip)
       log "endip is #{endip}"
       log "offset is #{offset}"
       byte = read(1) # 标志字节
       case byte.ord
       when 1
         # 标志字节为1，表示国家和区域信息都被同时重定向
-        country_offset = getlong3() # 重定向地址
+        country_offset = getlong3 # 重定向地址
         seek(country_offset)
         byte = read(1) # 标志字节
         case byte.ord
         when 2
           seek(getlong3)
-          info[:country] = getstring()
+          info[:country] = getstring
           seek(country_offset + 4)
-          info[:area] = getarea()
+          info[:area] = getarea
         else
           info[:country] = getstring(byte)
-          info[:area] = getarea()
+          info[:area] = getarea
         end
       when 2
         # 标志字节为2，表示国家信息被重定向
         seek(getlong3)
-        info[:country] = getstring()
+        info[:country] = getstring
         seek(offset + 8)
-        info[:area] = getarea()
+        info[:area] = getarea
       else
         info[:country] = getstring(byte)
-        info[:area] = getarea()
+        info[:area] = getarea
       end
 
       info[:country] = encoding_convert(info[:country])
@@ -116,8 +120,8 @@ module IpLocatorCn
       if str.include?(seperator_sheng)
         collection[:province], str = str.split(seperator_sheng, 2)
       else
-        province = (PROVINCES + CITY_DIRECTLY).find{ |x| str.start_with?(x) }
-        if x
+        province = (PROVINCES + CITY_DIRECTLY).find { |x| str.start_with?(x) }
+        if province
           collection[:province] = province
           is_city_directly = CITY_DIRECTLY.include?(province)
           str = str[province.length..-1]
@@ -162,8 +166,8 @@ module IpLocatorCn
 
     def live_load_dat
       require 'open-uri'
-      copywrite = download(IpLocatorCn.copywrite_url).read and nil
-      qqwry = download(IpLocatorCn.live_data_url).read.bytes and nil
+      (copywrite = download(IpLocatorCn.copywrite_url).read) && nil
+      (qqwry = download(IpLocatorCn.live_data_url).read.bytes) && nil
       key = copywrite.unpack('V6')[5]
       log "qqwry decoding key is #{key}"
       (0...0x200).each do |i|
@@ -172,25 +176,26 @@ module IpLocatorCn
         key &= 0xFF
         qqwry[i] ^= key
       end
-      qqwry = Zlib::Inflate.inflate(qqwry.pack('C*')) and nil
+      (qqwry = Zlib::Inflate.inflate(qqwry.pack('C*'))) && nil
       @io = StringIO.new(qqwry)
     end
 
     def parse_dat_info
-      @first_ip_pos = getlong4()
-      @last_ip_pos = getlong4()
+      @first_ip_pos = getlong4
+      @last_ip_pos = getlong4
       @total_ips = (last_ip_pos - first_ip_pos) / IP_ENTRY_BYTES
       log "total ip ranges: #{total_ips}"
     end
 
     def get_isp(str)
-      ISP.find {|x| str.include?(x)}
+      ISP.find { |x| str.include?(x) }
     end
 
     # b-tree search ip from qqwry.dat
     def locate_ip_pos(ip)
       x = ip2long(ip)
-      min, max = 0, total_ips
+      min = 0
+      max = total_ips
 
       while min <= max
         # b-tree search
@@ -198,14 +203,14 @@ module IpLocatorCn
         pos = first_ip_pos + i * IP_ENTRY_BYTES
         seek(pos)
         # get middle ip
-        y = read_ip()
+        y = read_ip
         if x < y
           # user ip < middle ip
           max = i - 1
         else
           # user ip > middle ip, read next ip entry
           read(3)
-          y = read_ip()
+          y = read_ip
           if x > y
             # user ip > next ip
             min = i + 1
@@ -243,14 +248,14 @@ module IpLocatorCn
     end
 
     def ipparts2long(parts)
-      0.upto(3).map{|i| parts[i] << ((3 - i) * 8) }.sum
+      0.upto(3).map { |i| parts[i] << ((3 - i) * 8) }.sum
     end
 
     def long2ip(n)
-      0.upto(3).map{|i| (n >> ((3 - i) * 8)) & 0xFF }.join('.')
+      0.upto(3).map { |i| (n >> ((3 - i) * 8)) & 0xFF }.join('.')
     end
 
-    def getstring(data='')
+    def getstring(data = '')
       char = read(1)
       while char.ord > 0
         data += char
@@ -267,14 +272,14 @@ module IpLocatorCn
         return ''
       when 1, 2
         seek(getlong3)
-        return getstring()
+        return getstring
       else
         return getstring(char)
       end
     end
 
     def encoding_convert(str)
-      ec = Encoding::Converter.new("GBK", "UTF-8")
+      ec = Encoding::Converter.new('GBK', 'UTF-8')
       result = ec.convert(str)
       ec.finish
       result

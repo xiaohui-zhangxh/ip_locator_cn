@@ -1,5 +1,6 @@
-require "ip_locator_cn/version"
+require 'ip_locator_cn/version'
 require 'ip_locator_cn/qqwry'
+
 module IpLocatorCn
   # embeded qqwry.dat
   def self.data_path
@@ -15,7 +16,7 @@ module IpLocatorCn
     'http://update.cz88.net/ip/copywrite.rar'
   end
 
-  def self.resolve(ip)
-    QQWry.new(dat_path: data_path).resolve(ip)
+  def self.resolve(ip, options={ dat_path: data_path })
+    QQWry.new(options).resolve(ip)
   end
 end
