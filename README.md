@@ -1,4 +1,6 @@
-# IP Locator CN [![Gem Version](https://badge.fury.io/rb/ip_locator_cn.svg)](https://badge.fury.io/rb/ip_locator_cn) [![Build Status](https://travis-ci.org/xiaohui-zhangxh/ip_locator_cn.svg?branch=master)](https://travis-ci.org/xiaohui-zhangxh/ip_locator_cn) [![Maintainability](https://api.codeclimate.com/v1/badges/ce57ddef67adc3d48378/maintainability)](https://codeclimate.com/github/xiaohui-zhangxh/ip_locator_cn/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/ce57ddef67adc3d48378/test_coverage)](https://codeclimate.com/github/xiaohui-zhangxh/ip_locator_cn/test_coverage) ![](https://ruby-gem-downloads-badge.herokuapp.com/ip_locator_cn?type=total)
+# IP Locator CN
+
+[![Gem Version](https://badge.fury.io/rb/ip_locator_cn.svg)](https://badge.fury.io/rb/ip_locator_cn) [![Build Status](https://travis-ci.org/xiaohui-zhangxh/ip_locator_cn.svg?branch=master)](https://travis-ci.org/xiaohui-zhangxh/ip_locator_cn) [![Maintainability](https://api.codeclimate.com/v1/badges/ce57ddef67adc3d48378/maintainability)](https://codeclimate.com/github/xiaohui-zhangxh/ip_locator_cn/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/ce57ddef67adc3d48378/test_coverage)](https://codeclimate.com/github/xiaohui-zhangxh/ip_locator_cn/test_coverage) ![](https://ruby-gem-downloads-badge.herokuapp.com/ip_locator_cn?type=total)
 
 基于纯真 IP 库解析中国的 IP，参考了“[纯真数据库自动更新原理](https://github.com/shuax/QQWryUpdate/blob/master/update.php)” 和 “[PHP 版本的 IP 搜索源码](https://github.com/itbdw/ip-database/blob/master/src/IpLocation.php)”
 
@@ -56,6 +58,11 @@ Or install it yourself as:
 [2019-03-01 17:37:53 +0800] => area is 后沙峪金龙网吧
  => {:province=>"北京", :city=>"顺义区", :country=>"中国", :ip=>"60.195.153.98", :county=>"", :isp=>"", :area=>"中国北京顺义区后沙峪金龙网吧", :origin_country=>"北京市顺义区", :origin_area=>"后沙峪金龙网吧"}
 ```
+
+## TODO
+
+- [ ] Fix: 目前无法提取少数名族地区的城市名称。如：“四川省凉山州西昌市”无法识别出“凉山州”是城市，“西昌市”是县；“内蒙古锡林郭勒盟”，无法识别出“锡林郭勒盟”是城市。
+- [ ] 通过 OTA 获取 QQWry 数据后，缓存的到本地磁盘
 
 ## Development
 
