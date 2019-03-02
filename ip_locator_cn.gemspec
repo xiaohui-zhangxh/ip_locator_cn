@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Resolve IP info in China'
   spec.description   = 'Resolve IP with qqwry.data, can download qqwry.data on the air.'
-  spec.homepage      = 'https://github.com/xiaohui-zhangxh/'
+  spec.homepage      = 'https://github.com/xiaohui-zhangxh/ip_locator_cn'
   spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

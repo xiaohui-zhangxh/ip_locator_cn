@@ -1,4 +1,4 @@
-# IP Locator CN
+# IP Locator CN [![Gem Version](https://badge.fury.io/rb/ip_locator_cn.svg)](https://badge.fury.io/rb/ip_locator_cn) [![Build Status](https://travis-ci.org/xiaohui-zhangxh/ip_locator_cn.svg?branch=master)](https://travis-ci.org/xiaohui-zhangxh/ip_locator_cn)
 
 基于纯真 IP 库解析中国的 IP，参考了“[纯真数据库自动更新原理](https://github.com/shuax/QQWryUpdate/blob/master/update.php)” 和 “[PHP 版本的 IP 搜索源码](https://github.com/itbdw/ip-database/blob/master/src/IpLocation.php)”
 
