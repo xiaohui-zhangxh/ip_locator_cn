@@ -17,6 +17,6 @@ module IpLocatorCn
   end
 
   def self.resolve(ip, options={ dat_path: data_path })
-    QQWry.new(options).resolve(ip)
+    QQWry.new(**options).resolve(ip)
   end
 end
